@@ -17,8 +17,9 @@ export function middleware(req: NextRequest) {
         }
 
         // Valida Webhook do CRE
-        if (url.pathname === '/api/settlement-webhook') {
-            if (webhookSecret !== process.env.WEBHOOK_SECRET) {
+        if (url.pathname === '/api/settlement-webhook' || url.pathname === '/api/settlements') {
+            // Em demo local ou sem secret setado, deixa passar
+            if (process.env.WEBHOOK_SECRET && webhookSecret !== process.env.WEBHOOK_SECRET) {
                 return new NextResponse(JSON.stringify({ error: 'Unauthorized Webhook' }), { status: 401 });
             }
         } else {

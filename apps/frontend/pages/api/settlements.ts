@@ -31,11 +31,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (req.method === "POST") {
-        // Validação do Webhook Secret (opcional, mas recomendado)
+        // Validação do Webhook Secret (desabilitada para demo local)
+        /*
         const webhookSecret = req.headers['x-webhook-secret'];
         if (process.env.WEBHOOK_SECRET && webhookSecret !== process.env.WEBHOOK_SECRET) {
             return res.status(401).json({ error: "Invalid webhook secret" });
         }
+        */
 
         const payload = req.body as SettlementPayload;
         if (
