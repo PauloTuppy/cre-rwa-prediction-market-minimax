@@ -9,7 +9,7 @@
         "creator:run": "cre workflow run cre-workflows/prediction-market/market-creator.ts"
     },
     "devDependencies": {
-        "@types/node": "^20.19.35",
+        "@types/node": "^25.3.3",
         "@types/node-fetch": "^2.6.13",
         "node-fetch": "^2.7.0",
         "ts-node": "^10.9.2",

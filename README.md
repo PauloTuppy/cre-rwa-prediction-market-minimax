@@ -20,6 +20,7 @@ Traditional prediction markets often struggle with resolving complex, institutio
     -   `complete-workflow.ts`: The main settlement engine using MiniMax.
     -   `market-creator.ts`: HTTP-triggered workflow for programmatically creating markets.
     -   `minimax.ts`: Oracle logic and specialized system prompts.
+-   `/docs`: Core project documentation: [Architecture](docs/architecture.md), [Roadmap](docs/roadmap.md), [Agent Profiles](docs/AGENTS_OVERVIEW.md).
 -   `/scripts`: Utilities like `bootstrap-markets.ts` for rapid demo seeding.
 
 ## ⚡ Quick Start
