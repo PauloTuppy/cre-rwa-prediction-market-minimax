@@ -18,6 +18,15 @@ interface Market {
     resolveTimestamp?: number;
 }
 
+// Helper determinístico para evitar hydration mismatch (Server vs Client)
+function formatDate(timestamp: number) {
+    const d = new Date(timestamp * 1000);
+    const day = d.getUTCDate().toString().padStart(2, '0');
+    const month = (d.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = d.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 export default function MarketsDashboard() {
     const [markets, setMarkets] = useState<Market[]>([
         {
@@ -111,7 +120,7 @@ export default function MarketsDashboard() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-sm text-slate-400 font-mono">
-                                            {m.resolveTimestamp ? new Date(m.resolveTimestamp * 1000).toLocaleDateString() : '-'}
+                                            {m.resolveTimestamp ? formatDate(m.resolveTimestamp) : '-'}
                                         </td>
                                     </tr>
                                 ))}
