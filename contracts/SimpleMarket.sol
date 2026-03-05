@@ -9,6 +9,7 @@ pragma solidity ^0.8.19;
 contract SimpleMarket {
     struct Market {
         string question;
+        uint256 resolveTimestamp;
         bool settled;
         bool result;
     }
@@ -16,13 +17,13 @@ contract SimpleMarket {
     mapping(uint256 => Market) public markets;
     uint256 public nextMarketId = 101;
 
-    event MarketCreated(uint256 indexed marketId, string question);
+    event MarketCreated(uint256 indexed marketId, string question, uint256 resolveTimestamp);
     event SettlementRequested(uint256 indexed marketId, string question);
     event MarketSettled(uint256 indexed marketId, bool result);
 
-    function createMarket(string calldata _question) external {
-        markets[nextMarketId] = Market(_question, false, false);
-        emit MarketCreated(nextMarketId, _question);
+    function createMarket(string calldata _question, uint256 _resolveTimestamp) external {
+        markets[nextMarketId] = Market(_question, _resolveTimestamp, false, false);
+        emit MarketCreated(nextMarketId, _question, _resolveTimestamp);
         nextMarketId++;
     }
 
