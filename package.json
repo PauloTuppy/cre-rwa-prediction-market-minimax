@@ -9,11 +9,10 @@
         "creator:run": "cre workflow run cre-workflows/prediction-market/market-creator.ts"
     },
     "devDependencies": {
-        "@chainlink/cre-sdk": "^0.1.0",
-        "@types/node": "^20.11.19",
-        "@types/node-fetch": "^2.6.11",
+        "@types/node": "^20.19.35",
+        "@types/node-fetch": "^2.6.13",
         "node-fetch": "^2.7.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.9.3"
     }
 }

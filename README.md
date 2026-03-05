@@ -56,6 +56,19 @@ The oracle is not just a general LLM. It is specialized to handle:
 - **Privacy**: Perform complex analysis off-chain while only submitting the binary result.
 - **Flexibility**: Easily connect to any private credit data provider API.
 
+## 🪙 Asset Modeling
+
+To ensure clarity for participants and institutional auditors, this project follows a strict asset model:
+- **1 Prediction Token = 1 USD Claim**: Each token represents a conditional claim of 1 USD on the underlying collateral of the RWA pool, payable only if the credit event occurs (or doesn't, depending on the side).
+- **Legal Binding**: While this demo focuses on the technological layer, in production, each market is tied to a specific **SPV (Special Purpose Vehicle)** or **Trust Deed**, where the oracle's on-chain settlement triggers the legal release of funds.
+
+## ⚠️ Risk Factors & Safety
+
+- **Oracle Dependency**: Settlement relies on the MiniMax AI's interpretation of credit events. 
+- **Data Integrity**: The workflow's accuracy depends on the quality of the financial data fetched (e.g., trustee reports).
+- **Circuit Breaker**: The `SimpleMarket` contract includes a `pause()` function allowing the owner to freeze operations in case of detected data anomalies or contract vulnerabilities.
+- **Non-Production**: This code is a demonstration for the Chainlink Constellation Hackathon and is **not audited** for managing real capital.
+
 ---
 
 *Built with ❤️ for the future of On-Chain Finance.*

@@ -4,13 +4,14 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 /**
  * @title SimpleMarket
  * @dev A minimal market contract that emits SettlementRequested for Chainlink CRE to pick up.
  * WARNING: This contract is for hackathon/demo purposes only. Not audited for production.
  */
-contract SimpleMarket is Ownable, ReentrancyGuard {
+contract SimpleMarket is Ownable, ReentrancyGuard, Pausable {
     struct Market {
         string question;
         uint256 resolveTimestamp;
@@ -31,13 +32,21 @@ contract SimpleMarket is Ownable, ReentrancyGuard {
         creSettler = _initialSettler;
     }
 
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     function setCreSettler(address _newSettler) external onlyOwner {
         require(_newSettler != address(0), "Invalid address");
         emit CreSettlerUpdated(creSettler, _newSettler);
         creSettler = _newSettler;
     }
 
-    function createMarket(string calldata _question, uint256 _resolveTimestamp) external nonReentrant {
+    function createMarket(string calldata _question, uint256 _resolveTimestamp) external nonReentrant whenNotPaused {
         require(bytes(_question).length > 0, "Empty question");
         require(_resolveTimestamp > block.timestamp, "Deadline must be in future");
         
@@ -49,7 +58,7 @@ contract SimpleMarket is Ownable, ReentrancyGuard {
     /**
      * @notice This event triggers the Chainlink CRE workflow.
      */
-    function requestSettlement(uint256 _marketId) external nonReentrant {
+    function requestSettlement(uint256 _marketId) external nonReentrant whenNotPaused {
         require(!markets[_marketId].settled, "Already settled");
         require(block.timestamp >= markets[_marketId].resolveTimestamp, "Market not yet mature");
         emit SettlementRequested(_marketId, markets[_marketId].question);
@@ -58,7 +67,7 @@ contract SimpleMarket is Ownable, ReentrancyGuard {
     /**
      * @notice Called by the Chainlink CRE workflow after LLM oracle verification.
      */
-    function settleMarket(uint256 _marketId, bool _result) external nonReentrant {
+    function settleMarket(uint256 _marketId, bool _result) external nonReentrant whenNotPaused {
         require(msg.sender == creSettler || msg.sender == owner(), "Unauthorized settler");
         require(!markets[_marketId].settled, "Already settled");
 

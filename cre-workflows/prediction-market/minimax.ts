@@ -39,8 +39,9 @@ export async function askMinimax(
     runtime: Runtime<{ minimaxModel: string }>,
     question: string,
 ): Promise<MinimaxResponse> {
-    const httpClient = new runtime.cre.capabilities.HTTPClient?.() ??
-        new (require("@chainlink/cre-sdk").cre.capabilities.HTTPClient)();
+    const httpClient = runtime.cre.capabilities.HTTPClient
+        ? new runtime.cre.capabilities.HTTPClient()
+        : new (require("@chainlink/cre-sdk").cre.capabilities.HTTPClient)();
 
     const body = {
         model: runtime.config.minimaxModel,
