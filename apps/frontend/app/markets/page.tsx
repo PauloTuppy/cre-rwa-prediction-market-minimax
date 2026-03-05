@@ -13,25 +13,31 @@ interface Market {
     result?: "YES" | "NO";
     confidence?: number;
     txHash?: string;
-    deadline?: string;
+    resolveTimestamp?: number;
 }
 
 export default function MarketsDashboard() {
     const [markets, setMarkets] = useState<Market[]>([
         {
             marketId: "101",
-            question: "Will the FED cut interest rates by June 2026?",
+            question: "Will Atlas Credit Vault experience a payment default on its Series A coupons before 2026-06-30?",
             status: "SETTLED",
-            result: "YES",
-            confidence: 9200,
+            result: "NO",
+            confidence: 9800,
             txHash: "0xabc...123",
-            deadline: "2026-06-01"
+            resolveTimestamp: 1782777600 // 2026-06-30
         },
         {
             marketId: "102",
-            question: "S&P 500 will close above 5500 by end of March 2026?",
+            question: "Will the LTV of Helios Secured Loan Vault remain below 70% until 2026-07-31?",
             status: "ACTIVE",
-            deadline: "2026-03-31"
+            resolveTimestamp: 1785456000 // 2026-07-31
+        },
+        {
+            marketId: "103",
+            question: "Will Aurora Real Estate Credit Pool DSCR fall below 1.0x by 2026-08-31?",
+            status: "ACTIVE",
+            resolveTimestamp: 1788134400 // 2026-08-31
         }
     ]);
 
@@ -92,6 +98,7 @@ export default function MarketsDashboard() {
                                 <th className="px-6 py-4 font-semibold">Market Id</th>
                                 <th className="px-6 py-4 font-semibold">Question</th>
                                 <th className="px-6 py-4 font-semibold">Status</th>
+                                <th className="px-6 py-4 font-semibold">Deadline</th>
                                 <th className="px-6 py-4 font-semibold">Result (LLM)</th>
                                 <th className="px-6 py-4 font-semibold">Confidence</th>
                                 <th className="px-6 py-4 font-semibold">Tx Hash</th>
@@ -107,6 +114,9 @@ export default function MarketsDashboard() {
                                             }`}>
                                             {m.status}
                                         </span>
+                                    </td>
+                                    <td className="px-6 py-5 text-sm text-slate-400 font-mono">
+                                        {m.resolveTimestamp ? new Date(m.resolveTimestamp * 1000).toLocaleDateString() : '-'}
                                     </td>
                                     <td className="px-6 py-5">
                                         {m.result ? (
