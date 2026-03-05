@@ -1,74 +1,124 @@
-# 🏛️ RWA Credit Oracle
+# 🏛️ Tokenized Private Credit Oracle – AI‑Powered Prediction Markets
 
 **Automated Institutional Credit Analysis for Tokenized Prediction Markets**
 
 Built for the Chainlink Constellation Hackathon, this project leverages **Chainlink CRE** and **MiniMax LLM** to provide high-fidelity, automated settlement for Real-World Asset (RWA) prediction markets, specifically focused on **Tokenized Private Credit**.
 
-## 🚀 Overview
+---
 
-Traditional prediction markets often struggle with resolving complex, institutional-grade credit events (e.g., covenant breaches, DSCR drops, restructuring). This project solves that by:
+## 🏛️ Problem
 
-1.  **Specialized LLM Persona**: A MiniMax-powered oracle trained as a *Senior Institutional Credit Analyst*.
-2.  **Chainlink CRE Integration**: Secure, off-chain computation that fetches real-world financial data and triggers on-chain settlement.
-3.  **Parametric Market Creation**: A `QuestionBuilder` that ensures every market created has professional, binary, and verifiable credit-related questions.
+Private credit markets are often:
+- **Low‑transparency**: Defaults and covenant breaches are often reported late or opaquely.
+- **Hard to monitor at scale**: Multiple vehicles, contracts, tranches and covenants.
+- **Lacking liquid instruments**: Missing hedging and price discovery for on-chain debts.
 
-## 🛠️ Project Structure
+Institutions want to **tokenize private credit** and still have near real‑time risk signals and a clear mechanism to resolve credit events.
 
--   `/apps/frontend`: Next.js dashboard for monitoring active markets and settlement history.
--   `/contracts`: `SimpleMarket.sol` - A lightweight market contract optimized for CRE triggers.
--   `/cre-workflows`:
-    -   `complete-workflow.ts`: The main settlement engine using MiniMax.
-    -   `market-creator.ts`: HTTP-triggered workflow for programmatically creating markets.
-    -   `minimax.ts`: Oracle logic and specialized system prompts.
--   `/docs`: Core project documentation: [Architecture](docs/architecture.md), [Roadmap](docs/roadmap.md), [Agent Profiles](docs/AGENTS_OVERVIEW.md).
--   `/scripts`: Utilities like `bootstrap-markets.ts` for rapid demo seeding.
+---
 
-## ⚡ Quick Start
+## 💡 Solution
 
-### 1. Requirements
-- Node.js v18+
-- Chainlink CRE SDK
-- MiniMax API Key
+This project implements a **Tokenized Private Credit Oracle for Prediction Markets** built on three pillars:
 
-### 2. Bootstrap Markets
-Seed the blockchain with institutional credit markets:
+1. **Onchain Prediction Markets (`SimpleMarket.sol`)**  
+   - Each market represents a binary claim about a credit event (e.g. “Will pool X’s DSCR fall below 1.0x by Y?”).  
+   - Users/institutions can take YES/NO positions, generating implied probabilities of credit risk.
+
+2. **Orchestration via Chainlink CRE + AI (MiniMax)**  
+   - CRE workflows listen to onchain events, enrich them with RWA/credit context and call MiniMax (M2.5) with a **Senior Institutional Credit Analyst** persona.  
+   - The AI decides whether the event occurred (YES/NO) with confidence.
+
+3. **Institutional Credit Risk Dashboard**  
+   - Next.js front‑end showing **Global Default Rate**, **Avg Credit Spread**, **Tokenized Debt TVL**, and **Liquidation Buffer**.  
+   - History of AI‑resolved markets including question, result, confidence, and transaction hash.
+
+---
+
+## 🏗️ Architecture
+
+Full architecture details can be found in [`/docs/architecture.md`](./docs/architecture.md).
+
+### Component Summary:
+
+- **Smart Contracts**  
+  - [`SimpleMarket.sol`](./contracts/SimpleMarket.sol): Handles market creation, YES/NO betting, and secure settlement via `settleMarket`.
+  - `RWAPool` (Logical): Represents the tokenized private credit pool exposing risk parameters.
+
+- **CRE Workflows**  
+  - [`complete-workflow.ts`](./cre-workflows/prediction-market/complete-workflow.ts): Triggered by `SettlementRequested`. Enriches questions and calls MiniMax.
+  - [`market-creator.ts`](./cre-workflows/prediction-market/market-creator.ts): HTTP endpoint `/create-credit-market` to programmatically build markets.
+  - [`creditQuestionBuilder.ts`](./cre-workflows/prediction-market/creditQuestionBuilder.ts): Transforms financial parameters into institutional-grade questions.
+
+- **AI / Oracle**  
+  - [`minimax.ts`](./cre-workflows/prediction-market/minimax.ts): Integrates with MiniMax M2.5. Uses a specialized persona focusing on **Credit Events, Payment Delays, and Covenant Breaches**.
+
+---
+
+## 🔄 End-to-End Flow
+
+1. **Market Creation**: Operator sends a request to `/create-credit-market`. The workflow generates a standardized question and calls `createMarket` onchain.
+2. **Trading**: Users trade YES/NO positions, providing continuous price discovery for the credit risk.
+3. **Resolution**: When a market matures, `requestSettlement` triggers the CRE Workflow.
+4. **AI Analysis**: MiniMax analyzes the credit event context. If confidence ≥ threshold, it calls `settleMarket` onchain.
+5. **Visualization**: The dashboard updates with the final result and the auditable resolution log.
+
+---
+
+## 🛡️ Security and Risk
+
+This is a **hackathon MVP**, not production‑ready for real TVL.
+
+### Current Measures:
+- **`resolveTimestamp`**: Prevents premature resolution before the credit event deadline.
+- **Circuit Breaker**: `SimpleMarket.sol` includes `pause()`/`unpause()` functions via OpenZeppelin `Pausable`.
+- **Confidence Threshold**: Automated settlement is only triggered if AI confidence is above a set limit (e.g., 5000/10000).
+- **Access Control**: `settleMarket` is restricted to authorized settlers (CRE addresses or Owner).
+
+Full "Audit Ready" checklist: [`/docs/audit_status.md`](./docs/audit_status.md).
+
+---
+
+## 📄 Documentation Structure
+
+- **Changelog**: [`/docs/changelog.md`](./docs/changelog.md)  
+- **Architecture**: [`/docs/architecture.md`](./docs/architecture.md)  
+- **Requirements**: [`/docs/requirements.md`](./docs/requirements.md)
+- **Roadmap**: [`/docs/roadmap.md`](./docs/roadmap.md)  
+- **Agents**: [`/docs/AGENTS_OVERVIEW.md`](./docs/AGENTS_OVERVIEW.md)  
+- **Protocol**: [`/docs/CONVERSATION_PROTOCOL.md`](./docs/CONVERSATION_PROTOCOL.md)  
+
+---
+
+## 🚀 Running the Demo Locally
+
+### 1. Prerequisites
+- Node.js 20.x
+- MiniMax API Key (configured in `secrets.yaml` and `.env`)
+
+### 2. Install
 ```bash
 npm install
-npm run bootstrap
 ```
 
-### 3. Run the Dashboard
+### 3. Workflows
+Run a CRE simulation:
+```bash
+cre workflow simulate ./cre-workflows/prediction-market/complete-workflow.ts \
+  --config ./cre-workflows/prediction-market/config.staging.json
+```
+
+### 4. Dashboard
 ```bash
 cd apps/frontend
-npm install
 npm run dev
+# open http://localhost:3000
 ```
 
-## 🧠 The AI Oracle (MiniMax)
-
-The oracle is not just a general LLM. It is specialized to handle:
-- **Default Events**: Missed coupons, principal payment delays.
-- **Financial Covenants**: DSCR (Debt Service Coverage Ratio) drops, LTV (Loan-to-Value) spikes.
-- **Credit Quality**: Rating downgrades, collateral drawdown.
-
-## 🔗 Chainlink CRE Benefits
-
-- **Low Latency**: Faster resolution than traditional multi-sig or governance-based oracles.
-- **Privacy**: Perform complex analysis off-chain while only submitting the binary result.
-- **Flexibility**: Easily connect to any private credit data provider API.
-
-## 🪙 Asset Modeling
-
-To ensure clarity for participants and institutional auditors, this project follows a strict asset model:
-- **1 Prediction Token = 1 USD Claim**: Each token represents a conditional claim of 1 USD on the underlying collateral of the RWA pool, payable only if the credit event occurs (or doesn't, depending on the side).
-- **Legal Binding**: While this demo focuses on the technological layer, in production, each market is tied to a specific **SPV (Special Purpose Vehicle)** or **Trust Deed**, where the oracle's on-chain settlement triggers the legal release of funds.
-
-## ⚠️ Risk Factors & Safety
-
-- **Oracle Dependency**: Settlement relies on the MiniMax AI's interpretation of credit events. 
-- **Data Integrity**: The workflow's accuracy depends on the quality of the financial data fetched (e.g., trustee reports).
-- **Circuit Breaker**: The `SimpleMarket` contract includes a `pause()` function allowing the owner to freeze operations in case of detected data anomalies or contract vulnerabilities.
-- **Non-Production**: This code is a demonstration for the Chainlink Constellation Hackathon and is **not audited** for managing real capital.
+### 5. Bootstrap Markets
+```bash
+npm run bootstrap
+```
 
 ---
 
