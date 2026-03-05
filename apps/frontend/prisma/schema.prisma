@@ -1,0 +1,33 @@
+// apps/frontend/prisma/schema.prisma
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // ou sqlite para dev rápido
+  url      = env("DATABASE_URL")
+}
+
+model Market {
+  id              String       @id // marketId do contrato
+  question        String
+  description     String?
+  settled         Boolean      @default(false)
+  settlement      Settlement?
+  createdAt       DateTime     @default(now())
+  deadline        DateTime?
+}
+
+model Settlement {
+  id         String   @id @default(uuid())
+  marketId   String   @unique
+  market     Market   @relation(fields: [marketId], references: [id])
+  result     String   // "YES" ou "NO"
+  confidence Int      // Escala 0-10000
+  txHash     String
+  settledAt  DateTime @default(now())
+}
