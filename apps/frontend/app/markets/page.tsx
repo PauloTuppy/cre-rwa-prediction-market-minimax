@@ -61,6 +61,29 @@ export default function MarketsDashboard() {
                 </div>
             </header>
 
+            <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl backdrop-blur-sm">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Global Default Rate</span>
+                    <div className="text-3xl font-bold mt-2 text-white">1.82%</div>
+                    <div className="text-emerald-500 text-xs mt-1">Below Industry Avg</div>
+                </div>
+                <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl backdrop-blur-sm">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Avg Credit Spread</span>
+                    <div className="text-3xl font-bold mt-2 text-white">450 bps</div>
+                    <div className="text-blue-400 text-xs mt-1">RWA Yield Premium</div>
+                </div>
+                <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl backdrop-blur-sm">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Tokenized Debt TVL</span>
+                    <div className="text-3xl font-bold mt-2 text-white">$4.2B</div>
+                    <div className="text-emerald-500 text-xs mt-1">Institutional Credit</div>
+                </div>
+                <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl backdrop-blur-sm">
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Liquidation Buffer</span>
+                    <div className="text-3xl font-bold mt-2 text-white">125%</div>
+                    <div className="text-slate-400 text-xs mt-1">Collateral Coverage</div>
+                </div>
+            </section>
+
             <main>
                 <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm">
                     <table className="w-full text-left">

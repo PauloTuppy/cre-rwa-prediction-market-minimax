@@ -40,10 +40,39 @@ export const workflow = cre.workflow<Config>("prediction-market-minimax", (runti
         const question = decoded.question;
 
         rt.log(`[Workflow] SettlementRequested detectado para marketId=${marketId}`);
-        rt.log(`[Workflow] Pergunta original do mercado: ${question}`);
 
-        // 1) Pergunta para a MiniMax (Aguardando resposta assíncrona)
-        const minimaxResult = await askMinimax(rt as Runtime<Config>, question);
+        // 1) Enriquecimento: Puxar contexto de mercado real (Ex: FED Rate / Yields)
+        let rwaContext = "No additional context available.";
+
+        try {
+            // Exemplo de chamada para uma API de dados financeiros (mockado para demo)
+            rt.log("[Workflow] Buscando contexto macroeconômico (Treasury Yields/FED Rate)...");
+
+            const marketData = {
+                fedRate: "5.50%",
+                treasuryYield10Y: "4.25%",
+                lastUpdate: new Date().toISOString()
+            };
+
+            rwaContext = `
+            CONTEXTO MACRO ATUAL:
+            - Taxa FED: ${marketData.fedRate}
+            - Yield Treasury 10Y: ${marketData.treasuryYield10Y}
+            - Timestamp: ${marketData.lastUpdate}
+            `;
+        } catch (e) {
+            rt.log("[Workflow] Aviso: Não foi possível enriquecer a pergunta com dados externos.");
+        }
+
+        const enrichedQuestion = `
+        ${rwaContext}
+        
+        MARKET QUESTION TO RESOLVE:
+        "${question}"
+        `;
+
+        // 2) Pergunta para a MiniMax com Pergunta Enriquecida
+        const minimaxResult = await askMinimax(rt as Runtime<Config>, enrichedQuestion);
         let parsed: LLMDecision;
 
         try {
