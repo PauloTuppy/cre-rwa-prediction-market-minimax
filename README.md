@@ -1,39 +1,61 @@
-# CRE RWA Prediction Market with MiniMax LLM Oracle
+# 🏛️ RWA Credit Oracle
 
-This repository contains a full-stack solution for an AI-powered RWA (Real World Asset) Prediction Market, utilizing **Chainlink Runtime Environment (CRE)** and **MiniMax LLM** as the core settlement oracle.
+**Automated Institutional Credit Analysis for Tokenized Prediction Markets**
 
-## 🏗️ Architecture Summary
+Built for the Chainlink Constellation Hackathon, this project leverages **Chainlink CRE** and **MiniMax LLM** to provide high-fidelity, automated settlement for Real-World Asset (RWA) prediction markets, specifically focused on **Tokenized Private Credit**.
 
-1.  **Smart Contracts (`/contracts`)**: Prediction markets that emit `SettlementRequested` when a market is ready to be resolved.
-2.  **CRE Workflow (`/cre-workflows`)**:
-    *   **Trigger**: Listens for the `SettlementRequested` event on the EVM chain.
-    *   **LLM Integration**: Calls the **MiniMax API** with a specialized prompt to evaluate the market question (real-world event).
-    *   **Confidence Threshold**: Only settles if LLM confidence exceeds 50% (5,000/10,000).
-    *   **On-chain Settlement**: Calls `settleMarket(marketId, isYes)` via the CRE `EVMClient`.
-    *   **Webhook Notification**: Sends a POST request to the Next.js dashboard with full settlement details.
-3.  **Frontend Dashboard (`/apps/frontend`)**:
-    *   **Webhook Ingestion**: `/api/settlement-webhook` receives the settlement payload and updates the database.
-    *   **Markets View**: `/markets` renders a premium dashboard showing active and settled markets with LLM confidence scores and on-chain transaction hashes.
+## 🚀 Overview
 
-## 🚀 Getting Started
+Traditional prediction markets often struggle with resolving complex, institutional-grade credit events (e.g., covenant breaches, DSCR drops, restructuring). This project solves that by:
 
-### 1. Prerequisites
-- [Chainlink CRE SDK](https://docs.chain.link/cre) installed.
-- [MiniMax API Key](https://api.minimax.chat/).
-- Next.js environment for the dashboard.
+1.  **Specialized LLM Persona**: A MiniMax-powered oracle trained as a *Senior Institutional Credit Analyst*.
+2.  **Chainlink CRE Integration**: Secure, off-chain computation that fetches real-world financial data and triggers on-chain settlement.
+3.  **Parametric Market Creation**: A `QuestionBuilder` that ensures every market created has professional, binary, and verifiable credit-related questions.
 
-### 2. Environment Variables (CRE)
-Configured via `.env` or CRE secrets:
-```env
-MINIMAX_API_KEY=your_minimax_key
-MINIMAX_API_URL=https://api.minimax.chat/v1/chat
-```
+## 🛠️ Project Structure
 
-### 3. Deploy & Run Workflow
+-   `/apps/frontend`: Next.js dashboard for monitoring active markets and settlement history.
+-   `/contracts`: `SimpleMarket.sol` - A lightweight market contract optimized for CRE triggers.
+-   `/cre-workflows`:
+    -   `complete-workflow.ts`: The main settlement engine using MiniMax.
+    -   `market-creator.ts`: HTTP-triggered workflow for programmatically creating markets.
+    -   `minimax.ts`: Oracle logic and specialized system prompts.
+-   `/scripts`: Utilities like `bootstrap-markets.ts` for rapid demo seeding.
+
+## ⚡ Quick Start
+
+### 1. Requirements
+- Node.js v18+
+- Chainlink CRE SDK
+- MiniMax API Key
+
+### 2. Bootstrap Markets
+Seed the blockchain with institutional credit markets:
 ```bash
-# Register and run the workflow
-cre workflow register ./cre-workflows/prediction-market/complete-workflow.ts --config ./cre-workflows/prediction-market/config.staging.json
+npm install
+npm run bootstrap
 ```
 
-## 📄 License
-MIT
+### 3. Run the Dashboard
+```bash
+cd apps/frontend
+npm install
+npm run dev
+```
+
+## 🧠 The AI Oracle (MiniMax)
+
+The oracle is not just a general LLM. It is specialized to handle:
+- **Default Events**: Missed coupons, principal payment delays.
+- **Financial Covenants**: DSCR (Debt Service Coverage Ratio) drops, LTV (Loan-to-Value) spikes.
+- **Credit Quality**: Rating downgrades, collateral drawdown.
+
+## 🔗 Chainlink CRE Benefits
+
+- **Low Latency**: Faster resolution than traditional multi-sig or governance-based oracles.
+- **Privacy**: Perform complex analysis off-chain while only submitting the binary result.
+- **Flexibility**: Easily connect to any private credit data provider API.
+
+---
+
+*Built with ❤️ for the future of On-Chain Finance.*

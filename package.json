@@ -1,0 +1,19 @@
+{
+    "name": "rwa-prediction-market-cre-minimax",
+    "version": "1.0.0",
+    "description": "RWA Credit Prediction Market using Chainlink CRE and MiniMax LLM",
+    "main": "index.js",
+    "scripts": {
+        "bootstrap": "ts-node scripts/bootstrap-markets.ts",
+        "workflow:simulate": "cre workflow simulate cre-workflows/prediction-market/complete-workflow.ts",
+        "creator:run": "cre workflow run cre-workflows/prediction-market/market-creator.ts"
+    },
+    "devDependencies": {
+        "@chainlink/cre-sdk": "^0.1.0",
+        "@types/node": "^20.11.19",
+        "@types/node-fetch": "^2.6.11",
+        "node-fetch": "^2.7.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    }
+}
