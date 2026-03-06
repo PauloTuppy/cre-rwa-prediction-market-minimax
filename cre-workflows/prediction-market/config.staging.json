@@ -1,10 +1,10 @@
 {
-  "minimaxModel": "minimax-chat-v1",
+  "minimaxModel": "MiniMax-M2.5",
   "evms": [
-      {
-          "marketAddress": "0x40A288E2e88a38FADb9204018A7c5453E8941031",
-          "chainSelectorName": "ethereum-sepolia",
-          "gasLimit": "500000"
-      }
+    {
+      "marketAddress": "0x40A288E2e88a38FADb9204018A7c5453E8941031",
+      "chainSelectorName": "ethereum-sepolia",
+      "gasLimit": "500000"
+    }
   ]
 }

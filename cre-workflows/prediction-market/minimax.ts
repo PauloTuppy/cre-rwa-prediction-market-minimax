@@ -58,23 +58,34 @@ export async function askMinimax(
     };
 
     const res = await httpClient.sendRequest(runtime, {
-        url: process.env.MINIMAX_API_URL ?? "https://api.minimax.chat/v1/chat",
+        url: process.env.MINIMAX_API_URL ?? "https://api.minimax.io/anthropic/v1/messages",
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.MINIMAX_API_KEY}`,
+            "x-api-key": process.env.MINIMAX_API_KEY ?? "",
+            "anthropic-version": "2023-06-01"
         },
-        body: Buffer.from(JSON.stringify(body), "utf-8").toString("base64"),
+        body: Buffer.from(JSON.stringify({
+            model: runtime.config.minimaxModel,
+            messages: body.messages,
+            max_tokens: 1024
+        }), "utf-8").toString("base64"),
     });
 
     const raw = Buffer.from(res.body, "base64").toString("utf-8");
+    console.log(`[MiniMax RAW]: ${raw}`);
 
     runtime.log(`[MiniMax] Resposta bruta: ${raw}`);
 
     let llmResponse = raw;
     try {
         const parsed = JSON.parse(raw);
-        llmResponse = parsed.choices?.[0]?.message?.content ?? raw;
+        if (parsed.error) {
+            runtime.log(`[MiniMax ERROR]: ${parsed.error.message || JSON.stringify(parsed.error)}`);
+        }
+        // Tenta formato Anthropic primeiro (procurando o item do tipo 'text'), depois OpenAI
+        const anthropicText = parsed.content?.find((c: any) => c.type === "text")?.text;
+        llmResponse = anthropicText ?? parsed.choices?.[0]?.message?.content ?? raw;
     } catch {
         runtime.log("[MiniMax] Falha ao parsear JSON da resposta da API");
     }
