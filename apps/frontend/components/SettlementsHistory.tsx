@@ -10,6 +10,7 @@ type Settlement = {
     result: "YES" | "NO";
     confidence: number;
     txHash: string;
+    simulated?: boolean;
 };
 
 export function SettlementsHistory() {
@@ -66,7 +67,7 @@ export function SettlementsHistory() {
                             <th className="px-6 py-4 text-left font-medium">Pergunta</th>
                             <th className="px-6 py-4 text-left font-medium">Resultado</th>
                             <th className="px-6 py-4 text-left font-medium">Confiança</th>
-                            <th className="px-6 py-4 text-left font-medium">Tx Hash</th>
+                            <th className="px-6 py-4 text-left font-medium">Tx Hash / Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800 bg-transparent">
@@ -80,18 +81,24 @@ export function SettlementsHistory() {
                                         {s.result}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-slate-400 font-medium">
+                                <td className="px-6 py-5 text-slate-400 font-medium">
                                     {(s.confidence / 100).toFixed(2)}%
                                 </td>
                                 <td className="px-6 py-4">
-                                    <a
-                                        href={`https://sepolia.etherscan.io/tx/${s.txHash}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-xs text-slate-500 hover:text-blue-400 underline underline-offset-4 decoration-slate-800 transition"
-                                    >
-                                        {s.txHash.slice(0, 10)}...
-                                    </a>
+                                    {s.simulated ? (
+                                        <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded font-bold uppercase tracking-tighter">
+                                            Simulated (CRE)
+                                        </span>
+                                    ) : (
+                                        <a
+                                            href={`https://sepolia.etherscan.io/tx/${s.txHash}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-4 decoration-slate-800 transition"
+                                        >
+                                            {s.txHash.slice(0, 10)}...
+                                        </a>
+                                    )}
                                 </td>
                             </tr>
                         ))}

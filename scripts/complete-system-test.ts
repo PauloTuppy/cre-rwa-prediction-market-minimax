@@ -59,7 +59,8 @@ async function runTest() {
             question: testQuestion,
             result: decision.result,
             confidence: decision.confidence,
-            txHash: "0x" + Math.random().toString(16).slice(2).padStart(64, '0')
+            txHash: "0x" + Math.random().toString(16).slice(2).padStart(64, '0'),
+            simulated: true
         };
         console.log(`[Test] Payload: ${JSON.stringify(payload, null, 2)}`);
 

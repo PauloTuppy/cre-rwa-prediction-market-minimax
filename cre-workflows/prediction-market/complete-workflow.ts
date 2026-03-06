@@ -120,6 +120,7 @@ export const workflow = cre.workflow<Config>("prediction-market-minimax", (runti
             result: parsed.result,
             confidence: parsed.confidence,
             txHash: tx.transactionHash,
+            simulated: tx.transactionHash.startsWith("0x000000")
         };
 
         rt.log("[Workflow] Enviando resultado para backend /api/settlements...");
